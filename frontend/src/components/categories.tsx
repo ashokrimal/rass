@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 import React, { useState, useRef, useEffect } from "react";
 
 type Category = {
@@ -24,14 +24,13 @@ function Categories() {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const responseCategory = await axios.get(
-          "http://localhost:5000/category/get",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const responseCategory = await api.get("/category/get", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+
         if (responseCategory.status === 200) {
           setCategories(responseCategory.data.category);
         }
@@ -54,17 +53,13 @@ function Categories() {
     formData.append("categoryDescription", categoryDescription);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/category/add",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const responseCategory = await api.post("/category/add", formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-      if (response.status === 201) {
+      if (responseCategory.status === 201) {
         alert("Category added successfully");
         setCategoryName("");
         setCategoryDescription("");
@@ -73,14 +68,11 @@ function Categories() {
           fileInputRef.current.value = "";
         }
         // Refresh categories
-        const updatedCategories = await axios.get(
-          "http://localhost:5000/category/get",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const updatedCategories = await api.get("/category/get", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         setCategories(updatedCategories.data.category);
       }
     } catch (error) {
@@ -93,7 +85,7 @@ function Categories() {
   const handleDeleteCategory = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
-        await axios.delete(`http://localhost:5000/category/delete/${id}`, {
+        await api.delete(`/category/delete/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -102,12 +94,10 @@ function Categories() {
         alert("Category deleted successfully");
 
         // Refresh categories
-        const updatedCategories = await axios.get(
-          "http://localhost:5000/category/get",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+        const updatedCategories = await api.get("/category/get", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           }
         );
         setCategories(updatedCategories.data.category);
@@ -144,8 +134,8 @@ function Categories() {
         formData.append("image", imageUrl);
       }
 
-      const response = await axios.put(
-        `http://localhost:5000/category/update/${editCategory._id}`,
+      const response = await api.put(
+        `/category/update/${editCategory._id}`,
         formData,
         {
           headers: {
@@ -159,14 +149,12 @@ function Categories() {
         handleCalcelUpdate();
 
         // Refresh categories
-        const updatedCategories = await axios.get(
-          "http://localhost:5000/category/get",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const updatedCategories = await api.get("/category/get", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        
         setCategories(updatedCategories.data.category);
       }
     } catch (error) {
